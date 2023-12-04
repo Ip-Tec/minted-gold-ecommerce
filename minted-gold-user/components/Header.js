@@ -64,7 +64,17 @@ const NavButton = styled.button`
 
 export default function Header() {
   const {cartProducts} = useContext(CartContext);
-  const [mobileNavActive,setMobileNavActive] = useState(false);
+  const [mobileNavActive, setMobileNavActive] = useState(false);
+  const [currentGold, setCurrentGold] = useState(null);
+
+  useEffect(() => {
+    const fetchGoldPrice = async () => {
+      const goldPrice = await getCurrentGoldPrice();
+      setCurrentGold(goldPrice);
+    };
+
+    fetchGoldPrice();
+  }, []);
   return (
     <StyledHeader>
       <Center>
@@ -76,6 +86,7 @@ export default function Header() {
             <NavLink href={'/categories'}>Categories</NavLink>
             <NavLink href={'/account'}>Account</NavLink>
             <NavLink href={'/cart'}>Cart ({cartProducts.length})</NavLink>
+            <p>Gold Price $ ({currentGold ? currentGold.rates.USD : 'Loading...'})</p>
           </StyledNav>
           <NavButton onClick={() => setMobileNavActive(prev => !prev)}>
             <BarsIcon />

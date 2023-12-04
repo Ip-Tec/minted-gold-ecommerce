@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Featured from "@/components/Featured";
 import {Product} from "@/models/Product";
-import {mongooseConnect} from "@/lib/mongoose";
+import {prisma} from "@/lib/prisma";
 import NewProducts from "@/components/NewProducts";
 
 export default function HomePage({featuredProduct,newProducts}) {
@@ -16,7 +16,7 @@ export default function HomePage({featuredProduct,newProducts}) {
 
 export async function getServerSideProps() {
   const featuredProductId = '640de2b12aa291ebdf213d48';
-  await mongooseConnect();
+  await prisma();
   const featuredProduct = await Product.findById(featuredProductId);
   const newProducts = await Product.find({}, null, {sort: {'_id':-1}, limit:10});
   return {
