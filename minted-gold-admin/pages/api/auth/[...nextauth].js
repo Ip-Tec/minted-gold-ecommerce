@@ -4,11 +4,16 @@ import NextAuth, { getServerSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaClient } from "@prisma/client";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 const prisma = new PrismaClient();
 
-const adminEmails = ["otakhorpeter@gmail.com","peterotakhor@gmail.com","peterotakhor2018@gmail.com"];
+const adminEmails = [
+  "otakhorpeter@gmail.com",
+  "peterotakhor@gmail.com",
+  "peterotakhor2018@gmail.com",
+];
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -21,6 +26,23 @@ export const authOptions = {
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
+    }),
+    CredentialsProvider({
+      // The name to display on the sign-in form (e.g., 'Sign in with...')
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      authorize: async (credentials, req) => {
+        // Add your logic for handling the credentials here
+        // For example, validate the username and password against your database
+        const user = { id: 1, name: "example" };
+        if (user) {
+          return Promise.resolve(user);
+        } else {
+          return Promise.resolve(null);
+        }
+      },
     }),
   ],
   adapter: PrismaAdapter(prisma),

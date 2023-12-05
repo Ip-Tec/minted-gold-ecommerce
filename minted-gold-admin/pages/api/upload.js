@@ -3,11 +3,12 @@
 import multiparty from 'multiparty';
 import fs from 'fs/promises';
 import path from 'path';
-import { mongooseConnect } from '@/lib/mongoose';
+import { PrismaClient } from '@prisma/client';
 import { isAdminRequest } from '@/pages/api/auth/[...nextauth]';
 
+const prisma = new PrismaClient();
+
 export default async function handle(req, res) {
-  await mongooseConnect();
   await isAdminRequest(req, res);
 
   const form = new multiparty.Form();

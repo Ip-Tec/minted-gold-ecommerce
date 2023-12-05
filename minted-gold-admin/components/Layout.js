@@ -8,7 +8,7 @@ import GoogleIcon from "@/icon/google";
 export default function Layout({ children }) {
   const [showNav, setShowNav] = useState(false);
   const { data: session } = useSession();
-  if (!session) {
+  if (session) {
     return (
       <>
         <div className="bg-slate-900 w-screen h-screen flex items-center relative">
