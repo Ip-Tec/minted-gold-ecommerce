@@ -8,14 +8,15 @@ import GoogleIcon from "@/icon/google";
 export default function Layout({ children }) {
   const [showNav, setShowNav] = useState(false);
   const { data: session } = useSession();
-  if (session) {
+  console.log({ session });
+  if (!session) {
     return (
       <>
         <div className="bg-slate-900 w-screen h-screen flex items-center relative">
           <div className="text-center w-full flex flex-col p-4 m-auto justify-evenly items-center text-white bg-slate-900">
             <h1 className="text-white w-auto overflow-hidden relative bg-slate-900 m-0 pt-9">
               Login to access the dashboard
-              <img src="./public/favicon.ico"/>
+              <img src="./public/favicon.ico" />
             </h1>
             <button
               onClick={() => signIn("github")}

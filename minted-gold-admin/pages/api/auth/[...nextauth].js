@@ -30,15 +30,21 @@ export const authOptions = {
     CredentialsProvider({
       // The name to display on the sign-in form (e.g., 'Sign in with...')
       credentials: {
+        email: { label: "Email", type: "text" },
         username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" },
+        // password: { label: "Password", type: "password" },
       },
       authorize: async (credentials, req) => {
-        // Add your logic for handling the credentials here
-        // For example, validate the username and password against your database
-        const user = { id: 1, name: "example" };
-        if (user) {
-          return Promise.resolve(user);
+        // Validate email and password against your database
+        const admin = await prisma.admin.findFirst({
+          where: {
+            email: credentials.email,
+            username: credentials.username,
+          },
+        });
+
+        if (admin) {
+          return Promise.resolve(admin);
         } else {
           return Promise.resolve(null);
         }
@@ -47,7 +53,8 @@ export const authOptions = {
   ],
   adapter: PrismaAdapter(prisma),
   callbacks: {
-    session: async ({ session, token, user }) => {
+    session: async ({ session, token, admin }) => {
+      console.log({ session }, { admin }, { token });
       if (adminEmails.includes(session?.user?.email)) {
         return session;
       } else {
