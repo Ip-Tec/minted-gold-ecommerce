@@ -10,6 +10,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 const prisma = new PrismaClient();
 
 const adminEmails = [
+  "peter@gmail.com",
   "otakhorpeter@gmail.com",
   "peterotakhor@gmail.com",
   "peterotakhor2018@gmail.com",
@@ -30,27 +31,46 @@ export const authOptions = {
     CredentialsProvider({
       // The name to display on the sign-in form (e.g., 'Sign in with...')
       credentials: {
-        username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" },
+        email: { label: "Email", type: "email" },
       },
-      authorize: async (credentials, req) => {
+      async authorize(credentials, req) {
         // Add your logic for handling the credentials here
         // For example, validate the username and password against your database
-        const user = { id: 1, name: "example" };
-        if (user) {
-          return Promise.resolve(user);
+        // Get data from DB using prisma client
+        console.log({ credentials }, { req });
+        const adminData = await prisma.admin.findFirst({
+          where: {
+            email: credentials.email,
+          },
+        });
+
+        if (adminData && credentials?.email === adminData.email) {
+          const admin = {
+            id: adminData.id?.toString() || "", // Convert number to string
+            username: adminData.username,
+            email: adminData.email,
+            // Include other properties as needed
+          };
+
+          return admin;
         } else {
-          return Promise.resolve(null);
+          return adminData;
         }
       },
     }),
   ],
   adapter: PrismaAdapter(prisma),
   callbacks: {
-    session: async ({ session, token, user }) => {
-      if (adminEmails.includes(session?.user?.email)) {
-        return session;
-      } else {
+    session: async ({ session, token, admin }) => {
+      try {
+        console.log({ session }, { admin }, { token });
+        // if (adminEmails.includes(session?.user?.email)) {
+        //   return session;
+        // } else {
+          return session;
+        // }
+      } catch (error) {
+        console.error("Error in session callback:", error);
         return false;
       }
     },

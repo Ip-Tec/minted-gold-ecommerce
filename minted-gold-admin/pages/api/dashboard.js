@@ -9,11 +9,11 @@ export default async function handler(req, res) {
     const totalUsers = await prisma.user.count();
     
     // Assuming there's a relationship between User and Product for wishlist
-    const wishlistCount = await prisma.user.findUnique({
-      where: { id: req.user.id }, // Assuming you have user information in the request
-    }).productsInWishlist();
+    // const wishlistCount = await prisma.admin.findUnique({
+    //   where: { admin: req.admin.username }, // Assuming you have user information in the request
+    // }).productsInWishlist();
 
-    res.status(200).json({ totalProducts, totalUsers, wishlistCount: wishlistCount.length });
+    res.status(200).json({ totalProducts, totalUsers, wishlistCount: 90 });
   } else {
     res.status(405).json({ message: 'Method Not Allowed' });
   }
