@@ -1,11 +1,11 @@
 // next-auth.js
 
-import NextAuth, { getServerSession } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
-import { PrismaClient } from "@prisma/client";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
+import NextAuth, { getServerSession } from "next-auth";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -20,40 +20,79 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({
-      timeout: 900000,
+      timeout: 15000,
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
     }),
     CredentialsProvider({
-      // The name to display on the sign-in form (e.g., 'Sign in with...')
       credentials: {
-        username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" },
+        email: { label: "Email", type: "email" },
       },
-      authorize: async (credentials, req) => {
-        // Add your logic for handling the credentials here
-        // For example, validate the username and password against your database
-        const user = { id: 1, name: "example" };
-        if (user) {
-          return Promise.resolve(user);
+      async authorize(credentials, req) {
+        console.log("Authorize credentials:", credentials);
+        const adminData = await prisma.admin.findFirst({
+          where: {
+            email: credentials.email,
+          },
+        });
+
+        if (adminData && credentials?.email === adminData.email) {
+          console.log("User is an admin:", adminData);
+          const admin = {
+            id: adminData.id,
+            name: adminData.name,
+            email: adminData.email,
+            username: adminData.username,
+          };
+
+          // Return the user data to let NextAuth.js handle the session creation
+          return Promise.resolve(admin);
         } else {
-          return adminData;
+          console.log("User is not an admin:", adminData);
+          // Returning null indicates authentication failure
+          return Promise.resolve(null);
         }
       },
     }),
   ],
+  session: {
+    strategy: "jwt",
+  },
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
+  },
   adapter: PrismaAdapter(prisma),
   callbacks: {
-    session: async ({ session, token, user }) => {
-      if (adminEmails.includes(session?.user?.email)) {
-        return session;
-      } else {
-        return false;
-      }
+    async signIn(user, account, profile) {
+      console.log("Sign In:", user);
+      return true;
+    },
+    async jwt(token, user) {
+      console.log("JWT:", token);
+      console.log("User:", user);
+      return token;
+    },
+    async session(session, token) {
+      console.log("Session:", session);
+      // session.user = {
+      //   id: token.id,
+      //   name: token.name,
+      //   email: token.email,
+      //   username: token.username,
+      //   // Add other properties as needed
+      // };
+      return session;
     },
   },
 };
@@ -61,10 +100,20 @@ export const authOptions = {
 export default NextAuth(authOptions);
 
 export async function isAdminRequest(req, res) {
-  const session = await getServerSession(req, res, authOptions);
-  if (!adminEmails.includes(session?.user?.email)) {
-    res.status(401);
-    res.end();
-    throw "not an admin";
+  try {
+    const session = await getServerSession(req, res, authOptions);
+    console.log("isAdminRequest session:", session);
+
+    // Uncomment the following lines if you want to restrict access to admins
+    if (!adminEmails.includes(session?.user?.email)) {
+      res.status(401).end();
+      throw new Error("User not authorized");
+    }
+
+    return session;
+    // Continue with other logic for admin requests
+  } catch (error) {
+    console.error("isAdminRequest error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }

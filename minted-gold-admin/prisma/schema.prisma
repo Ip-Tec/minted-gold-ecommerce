@@ -36,6 +36,7 @@ model product {
   price         Float
   adminUsername String
   createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
   image         String
   stock         String
   admin         admin    @relation(fields: [adminUsername], references: [username], map: "Product_adminUsername_fkey")
