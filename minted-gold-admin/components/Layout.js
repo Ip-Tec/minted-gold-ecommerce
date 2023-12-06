@@ -15,7 +15,11 @@ export default function Layout({ children }) {
         <div className="bg-slate-900 w-screen h-screen flex items-center relative">
           <div className="text-center w-full flex flex-col p-4 m-auto justify-evenly items-center text-white bg-slate-900">
             <h1 className="text-white w-auto overflow-hidden relative bg-slate-900 m-0 pt-9">
+<<<<<<< HEAD
               Login to access the dashboard
+=======
+              Login to access the Admin Dashboard
+>>>>>>> refs/remotes/origin/main
               <img src="./public/favicon.ico" />
             </h1>
             <button
