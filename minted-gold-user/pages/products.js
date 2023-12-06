@@ -1,12 +1,13 @@
+// pages/products.js
 import Header from "@/components/Header";
-import styled from "styled-components";
 import Center from "@/components/Center";
-import {mongooseConnect} from "@/lib/mongoose";
-import {Product} from "@/models/Product";
 import ProductsGrid from "@/components/ProductsGrid";
 import Title from "@/components/Title";
+import { PrismaClient } from '@prisma/client';
 
-export default function ProductsPage({products}) {
+const prisma = new PrismaClient();
+
+export default function ProductsPage({ products }) {
   return (
     <>
       <Header />
@@ -19,11 +20,13 @@ export default function ProductsPage({products}) {
 }
 
 export async function getServerSideProps() {
-  await mongooseConnect();
-  const products = await Product.find({}, null, {sort:{'_id':-1}});
+  const products = await prisma.product.findMany({
+    orderBy: { id: 'desc' }, // or however you want to order
+  });
+
   return {
-    props:{
+    props: {
       products: JSON.parse(JSON.stringify(products)),
-    }
+    },
   };
 }

@@ -1,21 +1,23 @@
-import Center from "@/components/Center";
+// pages/product/[id].js
+import React, { useContext } from "react";
 import Header from "@/components/Header";
+import Center from "@/components/Center";
 import Title from "@/components/Title";
-import {mongooseConnect} from "@/lib/mongoose";
-import {Product} from "@/models/Product";
-import styled from "styled-components";
 import WhiteBox from "@/components/WhiteBox";
 import ProductImages from "@/components/ProductImages";
 import Button from "@/components/Button";
 import CartIcon from "@/components/icons/CartIcon";
-import {useContext} from "react";
-import {CartContext} from "@/components/CartContext";
+import styled from "styled-components";
+import { CartContext } from "@/components/CartContext";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const ColWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   @media screen and (min-width: 768px) {
-    grid-template-columns: .8fr 1.2fr;
+    grid-template-columns: 0.8fr 1.2fr;
   }
   gap: 40px;
   margin: 40px 0;
@@ -29,27 +31,52 @@ const Price = styled.span`
   font-size: 1.4rem;
 `;
 
-export default function ProductPage({product}) {
-  const {addProduct} = useContext(CartContext);
+export default function ProductPage({ product }) {
+  const { addProduct } = useContext(CartContext);
+
+  // Check if product data is available
+  if (!product) {
+    return (
+      <>
+        <Header />
+        <Center>
+          <p>Product not found.</p>
+        </Center>
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
       <Center>
         <ColWrapper>
           <WhiteBox>
-            <ProductImages images={product.images} />
+            {/* Check if images array is available before rendering */}
+            {product.images && product.images.length > 0 && (
+              <ProductImages images={product.images} />
+            )}
           </WhiteBox>
           <div>
-            <Title>{product.title}</Title>
-            <p>{product.description}</p>
+            {/* Check if title is available before rendering */}
+            {product.title && <Title>{product.title}</Title>}
+            
+            {/* Check if description is available before rendering */}
+            {product.description && <p>{product.description}</p>}
+            
             <PriceRow>
               <div>
-                <Price>${product.price}</Price>
+                {/* Check if price is available before rendering */}
+                {product.price && <Price>${product.price}</Price>}
               </div>
               <div>
-                <Button primary onClick={() => addProduct(product._id)}>
-                  <CartIcon />Add to cart
-                </Button>
+                {/* Check if addProduct function is available before using it */}
+                {addProduct && (
+                  <Button primary onClick={() => addProduct(product._id)}>
+                    <CartIcon />
+                    Add to cart
+                  </Button>
+                )}
               </div>
             </PriceRow>
           </div>
@@ -60,12 +87,31 @@ export default function ProductPage({product}) {
 }
 
 export async function getServerSideProps(context) {
-  await mongooseConnect();
-  const {id} = context.query;
-  const product = await Product.findById(id);
-  return {
-    props: {
-      product: JSON.parse(JSON.stringify(product)),
+  const { id } = context.params;
+
+  try {
+    // Check if id is available
+    if (!id) {
+      throw new Error("Product ID not provided");
     }
+
+    const product = await prisma.product.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    return {
+      props: {
+        product: JSON.parse(JSON.stringify(product)),
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching product:", error.message);
+    return {
+      props: {
+        product: null,
+      },
+    };
   }
 }
