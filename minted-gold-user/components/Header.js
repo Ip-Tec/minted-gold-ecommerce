@@ -66,10 +66,46 @@ const NavButton = styled.button`
   }
 `;
 
+// ... (import statements)
+
+const SearchWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  @media screen and (max-width: 767px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #222;
+    z-index: 2;
+  }
+`;
+
+const Search = styled.input`
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-left: 10px;
+`;
+
+const LogoWrapper = styled.div`
+  flex-grow: 1;
+
+  @media screen and (max-width: 767px) {
+    display: none;
+  }
+`;
+
 export default function Header() {
   const { cartProducts } = useContext(CartContext);
   const [mobileNavActive, setMobileNavActive] = useState(false);
   const [currentGold, setCurrentGold] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const handleScroll = () => {
+    setIsScrolled(window.scrollY > 0);
+  };
 
   useEffect(() => {
     const fetchGoldPrice = async () => {
@@ -78,23 +114,30 @@ export default function Header() {
     };
 
     fetchGoldPrice();
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
+
   return (
     <StyledHeader>
       <Center>
         <Wrapper>
-          <Logo href={"/"}>Minted Gold</Logo>
+          <SearchWrapper
+            style={{ borderBottom: isScrolled ? "1px solid #ccc" : "none" }}
+          >
+            <LogoWrapper>
+              <Logo href={"/"}>Minted Gold</Logo>
+            </LogoWrapper>
+            <Search type="text" placeholder="Search" />
+          </SearchWrapper>
           <StyledNav mobileNavActive={mobileNavActive}>
-            {/* <NavLink href={"/"}>Home</NavLink> */}
-            <NavLink href={"/products"}>All products</NavLink>
-            {/* <NavLink href={"/categories"}>Categories</NavLink> */}
-            {/* <NavLink href={"/account"}>Account</NavLink> */}
-            <NavLink href="" className="text-orange-300 block py-2 px-0 m-0">
-              Gold Price $ ({currentGold ? currentGold.rates.USD : "Loading..."}
-              )
-            </NavLink>
+            {/* Navigation links */}
           </StyledNav>
-            <NavLink href={"/cart"}>Cart ({cartProducts.length})</NavLink>
+          <NavLink href={"/cart"}>Cart ({cartProducts.length})</NavLink>
           <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
             <BarsIcon />
           </NavButton>
