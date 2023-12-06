@@ -27,7 +27,7 @@ export async function getServerSideProps() {
 
   const newProducts = await prisma.product.findMany({
     orderBy: {
-      _id: 'desc',
+      id: 'desc',
     },
     take: 10,
   });
