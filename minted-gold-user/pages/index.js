@@ -1,10 +1,13 @@
+// pages/index.js
+
 import Header from "@/components/Header";
 import Featured from "@/components/Featured";
-import {Product} from "@/models/Product";
-import {prisma} from "@/lib/prisma";
+import { PrismaClient } from '@prisma/client';
 import NewProducts from "@/components/NewProducts";
 
-export default function HomePage({featuredProduct,newProducts}) {
+const prisma = new PrismaClient();
+
+export default function HomePage({ featuredProduct, newProducts }) {
   return (
     <div>
       <Header />
@@ -15,10 +18,20 @@ export default function HomePage({featuredProduct,newProducts}) {
 }
 
 export async function getServerSideProps() {
-  const featuredProductId = '640de2b12aa291ebdf213d48';
-  await prisma();
-  const featuredProduct = await Product.findById(featuredProductId);
-  const newProducts = await Product.find({}, null, {sort: {'_id':-1}, limit:10});
+  const featuredProductId = 1; // Assuming your product ID is an integer
+  const featuredProduct = await prisma.product.findUnique({
+    where: {
+      id: featuredProductId,
+    },
+  });
+
+  const newProducts = await prisma.product.findMany({
+    orderBy: {
+      _id: 'desc',
+    },
+    take: 10,
+  });
+
   return {
     props: {
       featuredProduct: JSON.parse(JSON.stringify(featuredProduct)),
