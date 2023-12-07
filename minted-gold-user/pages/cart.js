@@ -23,11 +23,21 @@ const Box = styled.div`
   border-radius: 10px;
   padding: 30px;
 `;
-
+const FixedOrderBox = styled.div`
+  top: 50%;
+  right: 0;
+  position: fixed;
+  width: 20rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: translateY(-50%);
+`;
 const ProductInfoCell = styled.td`
   padding: 10px 0;
 `;
-
+const ButtonPP = styled(Button)`
+  padding: 1rem 1.3rem;
+`;
 const ProductImageBox = styled.div`
   width: 70px;
   height: 100px;
@@ -66,8 +76,6 @@ const CityHolder = styled.div`
   gap: 5px;
 `;
 
-// ... imports ...
-
 export default function CartPage() {
   const { user, cartProducts, addProduct, removeProduct, clearCart } =
     useContext(CartContext);
@@ -91,9 +99,14 @@ export default function CartPage() {
         setProducts([]);
       }
     } else {
-      // User is not logged in, fetch cart from server
-      // Fetch the cart for the non-logged-in user from the server
-      // Example: axios.get("/api/cart").then((response) => setProducts(response.data));
+      // User is not logged in, fetch cart from local storage
+      const storedCart = localStorage.getItem("cart");
+      if (storedCart) {
+        setProducts(JSON.parse(storedCart));
+      } else {
+        // If no cart data is found in local storage, you can fetch it from the server
+        // Example: axios.get("/api/cart").then((response) => setProducts(response.data));
+      }
     }
   }, [user, cartProducts]);
 
@@ -215,56 +228,58 @@ export default function CartPage() {
             )}
           </Box>
           {!!cartProducts?.length && (
-            <Box>
-              <h2>Order information</h2>
-              <Input
-                type="text"
-                placeholder="Name"
-                value={name}
-                name="name"
-                onChange={(ev) => setName(ev.target.value)}
-              />
-              <Input
-                type="text"
-                placeholder="Email"
-                value={email}
-                name="email"
-                onChange={(ev) => setEmail(ev.target.value)}
-              />
-              <CityHolder>
+            <FixedOrderBox className="h-72">
+              <Box>
+                <h2>Order information</h2>
                 <Input
                   type="text"
-                  placeholder="City"
-                  value={city}
-                  name="city"
-                  onChange={(ev) => setCity(ev.target.value)}
+                  placeholder="Name"
+                  value={name}
+                  name="name"
+                  onChange={(ev) => setName(ev.target.value)}
                 />
                 <Input
                   type="text"
-                  placeholder="Postal Code"
-                  value={postalCode}
-                  name="postalCode"
-                  onChange={(ev) => setPostalCode(ev.target.value)}
+                  placeholder="Email"
+                  value={email}
+                  name="email"
+                  onChange={(ev) => setEmail(ev.target.value)}
                 />
-              </CityHolder>
-              <Input
-                type="text"
-                placeholder="Street Address"
-                value={streetAddress}
-                name="streetAddress"
-                onChange={(ev) => setStreetAddress(ev.target.value)}
-              />
-              <Input
-                type="text"
-                placeholder="Country"
-                value={country}
-                name="country"
-                onChange={(ev) => setCountry(ev.target.value)}
-              />
-              <Button black block onClick={goToPayment}>
-                Continue to payment
-              </Button>
-            </Box>
+                <CityHolder>
+                  <Input
+                    type="text"
+                    placeholder="City"
+                    value={city}
+                    name="city"
+                    onChange={(ev) => setCity(ev.target.value)}
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Postal Code"
+                    value={postalCode}
+                    name="postalCode"
+                    onChange={(ev) => setPostalCode(ev.target.value)}
+                  />
+                </CityHolder>
+                <Input
+                  type="text"
+                  placeholder="Street Address"
+                  value={streetAddress}
+                  name="streetAddress"
+                  onChange={(ev) => setStreetAddress(ev.target.value)}
+                />
+                <Input
+                  type="text"
+                  placeholder="Country"
+                  value={country}
+                  name="country"
+                  onChange={(ev) => setCountry(ev.target.value)}
+                />
+                <ButtonPP black block onClick={goToPayment}>
+                  Continue to payment
+                </ButtonPP>
+              </Box>
+            </FixedOrderBox>
           )}
         </ColumnsWrapper>
       </Center>
