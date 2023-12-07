@@ -21,13 +21,21 @@ model admin {
 }
 
 model order {
-  id          Int       @id @default(autoincrement())
-  orderNumber String
-  orderStatus String
-  buyerId     Int
-  createdAt   DateTime  @default(now())
-  user        user      @relation(fields: [buyerId], references: [id], map: "Order_buyerId_fkey")
-  product     product[] @relation("ordertoproduct")
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String
+  city          String
+  buyerId       Int
+  orderNumber   String
+  orderStatus   String
+  line_items    Json
+  postalCode    String
+  streetAddress String
+  country       String
+  paid          Boolean
+  createdAt     DateTime  @default(now())
+  user          user      @relation(fields: [buyerId], references: [id], map: "Order_buyerId_fkey")
+  product       product[] @relation("ordertoproduct")
 
   @@index([buyerId], map: "Order_buyerId_fkey")
 }
@@ -40,7 +48,7 @@ model product {
   adminUsername String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
-  image         String
+  image         Json
   stock         String
   admin         admin    @relation(fields: [adminUsername], references: [username], map: "Product_adminUsername_fkey")
   order         order[]  @relation("ordertoproduct")
