@@ -2,7 +2,7 @@
 
 import Header from "@/components/Header";
 import Featured from "@/components/Featured";
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 import NewProducts from "@/components/NewProducts";
 
 const prisma = new PrismaClient();
@@ -18,7 +18,8 @@ export default function HomePage({ featuredProduct, newProducts }) {
 }
 
 export async function getServerSideProps() {
-  const featuredProductId = 1; // Assuming your product ID is an integer
+  // Assuming your product ID is an integer
+  const featuredProductId = 1;
   const featuredProduct = await prisma.product.findUnique({
     where: {
       id: featuredProductId,
@@ -27,7 +28,7 @@ export async function getServerSideProps() {
 
   const newProducts = await prisma.product.findMany({
     orderBy: {
-      id: 'desc',
+      id: "desc",
     },
     take: 10,
   });
