@@ -11,18 +11,40 @@ git clone https://github.com/Ip-Tec/minted-gold-ecommerce.git
 # Navigate to the project directory:
 cd minted-gold-ecommerce
 
-# Navigate to the project directory:
+# Navigate to the user directory:
 cd user
 
 # Install dependencies:
 yarn install
 
-# Navigate to the project directory:
+# Navigate to the admin directory:
 cd admin
 
 # Install dependencies:
 yarn install
 ```
+# .env Configuration
+Create a .env file in the root directory with the following content:
+
+```bash
+DATABASE_URL="mysql://your_username@localhost:3306/your_database_name"
+```
+Replace your_username and your_database_name with your MySQL username and database name.
+
+# Prisma Migrations
+Run Prisma migrations to set up the database:
+
+```bash
+yarn prisma migrate dev
+```
+Start Development Server
+
+```bash
+yarn dev
+```
+Your development server should now be running at http://localhost:3000.
+
+
 ## Features
 
 - Browse and purchase minted gold and custom jewelry.
