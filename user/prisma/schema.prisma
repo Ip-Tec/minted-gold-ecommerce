@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model admin {
+  id       Int       @id @default(autoincrement())
+  username String    @unique(map: "Admin_username_key")
+  email    String    @unique(map: "Admin_email_key")
+  provider String
+  name     String    @default("")
+  product  product[]
+  role     role[]    @relation("admintorole")
+}
+
+model order {
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String
+  city          String
+  buyerId       Int
+  orderNumber   String
+  orderStatus   String
+  line_items    Json
+  postalCode    String
+  streetAddress String
+  country       String
+  paid          Boolean
+  createdAt     DateTime  @default(now())
+  user          user      @relation(fields: [buyerId], references: [id], map: "Order_buyerId_fkey")
+  product       product[] @relation("ordertoproduct")
+
+  @@index([buyerId], map: "Order_buyerId_fkey")
+}
+
+model product {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String
+  price         Float
+  adminUsername String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+  image         Json
+  stock         String
+  admin         admin    @relation(fields: [adminUsername], references: [username], map: "Product_adminUsername_fkey")
+  order         order[]  @relation("ordertoproduct")
+  user          user[]   @relation("wishlistitem")
+
+  @@index([adminUsername], map: "Product_adminUsername_fkey")
+}
+
+model role {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique(map: "Role_name_key")
+  description String
+  admin       admin[] @relation("admintorole")
+}
+
+model user {
+  id            Int       @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  email         String    @unique(map: "User_email_key")
+  contactNumber String
+  password      String
+  createdAt     DateTime  @default(now())
+  isActive      Boolean   @default(true)
+  order         order[]
+  product       product[] @relation("wishlistitem")
+}
