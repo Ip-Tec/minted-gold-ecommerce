@@ -1,23 +1,29 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import Nav from "@/components/Nav";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import GitHub from "@/icon/github";
 import GoogleIcon from "@/icon/google";
 
 export default function Layout({ children }) {
   const [showNav, setShowNav] = useState(false);
-  const { data: session } = useSession();
-  console.log("SSSSSSSSSSS", { session });
-  if (!session) {
+  const [email, setEmail] = useState();
+  const { data: session, update, status } = useSession();
+
+  useEffect(() => {
+    // Use the session data here
+    // console.log( session , { status }, { update });
+    // console.log( session?.session?.session?.user);
+    console.log(session?.user);
+    // console.log(session);
+  }, [session]);
+
+  const displayLoginUser = session?.user?.name;
+  if (status == "unauthenticated" || status == "loading") {
     return (
       <>
-        <div className="bg-slate-900 w-screen h-screen flex items-center relative">
+        <div className="bg-slate-900 w-screen h-screen flex items-center relative shadow-md">
           <div className="text-center w-full flex flex-col p-4 m-auto justify-evenly items-center text-white bg-slate-900">
-            <h1 className="text-white w-auto overflow-hidden relative bg-slate-900 m-0 pt-9">
-              Login to access the Admin Dashboard
-              <img src="./public/favicon.ico" />
-            </h1>
             <button
               onClick={() => signIn("github")}
               className="bg-gray-600 w-auto m-3 flex items-center justify-evenly p-4 rounded-lg"
@@ -32,6 +38,23 @@ export default function Layout({ children }) {
               <GoogleIcon width={"2rem"} height={"2rem"} />
               <span className="px-3.5">Login with Google</span>
             </button>
+            <div className="divided divide-x divide-y">or</div>
+            <h6>Login with Email</h6>
+            <div className="w-auto m-3 flex flex-col items-center justify-evenly text-black p-4 rounded-lg">
+              <input
+                width={"2rem"}
+                placeholder="example@mail.com"
+                height={"2rem"}
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <button
+                onClick={() => signIn("credentials", { email })}
+                className="px-3.5 p-3 bg-blue-800 my-2 hover:border-2 hover:bg-transparent hover:border-blue-800 hover:text-white rounded-md"
+              >
+                Login with Email
+              </button>
+            </div>
           </div>
         </div>
       </>
@@ -61,7 +84,19 @@ export default function Layout({ children }) {
       </div>
       <div className="flex">
         <Nav show={showNav} />
-        <div className="flex-grow p-4">{children}</div>
+        <div className="flex-grow p-4">
+          <div className="text-blue-900 flex justify-between mb-4">
+            <h2>
+              Hello, <b className="capitalize">{displayLoginUser}</b>
+            </h2>
+            <div className="flex bg-gray-300 gap-1 py-1 px-1 text-black rounded-lg overflow-hidden">
+              <img src={session?.user?.image} alt="" className="w-6 h-6" />
+              <span className="px-2 capitalize">{displayLoginUser}</span>
+            </div>
+          </div>
+
+          {children}
+        </div>
       </div>
     </div>
   );

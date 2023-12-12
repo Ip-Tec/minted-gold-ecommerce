@@ -1,21 +1,26 @@
 // pages/api/category.js
 
-import prisma from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions, isAdminRequest } from '@/pages/api/auth/[...nextauth]';
+import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions, isAdminRequest } from "@/pages/api/auth/[...nextauth]";
+
+const prisma = new PrismaClient();
 
 export default async function handle(req, res) {
   const { method } = req;
-  await isAdminRequest(req, res);
-
-  if (method === 'GET') {
-    const categories = await prisma.category.findMany({
-      include: { parent: true },
-    });
-    res.json(categories);
+  // const jjj = await isAdminRequest(req, res);
+  // console.log({ jjj });
+  if (method === "GET") {
+    try {
+      const categories = await prisma.categorie.findMany();
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   }
 
-  if (method === 'POST') {
+  if (method === "POST") {
     const { name, parentCategory, properties } = req.body;
     const categoryDoc = await prisma.category.create({
       data: {
@@ -27,10 +32,10 @@ export default async function handle(req, res) {
     res.json(categoryDoc);
   }
 
-  if (method === 'PUT') {
-    const { name, parentCategory, properties, _id } = req.body;
+  if (method === "PUT") {
+    const { name, parentCategory, properties, id } = req.body;
     const categoryDoc = await prisma.category.update({
-      where: { id: _id },
+      where: { id: id },
       data: {
         name,
         parentId: parentCategory || undefined,
@@ -40,11 +45,11 @@ export default async function handle(req, res) {
     res.json(categoryDoc);
   }
 
-  if (method === 'DELETE') {
-    const { _id } = req.query;
+  if (method === "DELETE") {
+    const { id } = req.query;
     await prisma.category.delete({
-      where: { id: parseInt(_id) },
+      where: { id: parseInt(id) },
     });
-    res.json('ok');
+    res.json("ok");
   }
 }
