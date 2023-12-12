@@ -12,14 +12,14 @@ export default function Home() {
     const fetchData = async () => {
       try {
         if (session) {
-          const response = await fetch("/api/dashboard/"+session.user, {
+          const response = await fetch("/api/dashboard/" + session.user, {
             method: "GET",
           });
           // console.log(session.accessToken);
           if (response.ok) {
             const data = await response.json();
+            console.log("index-data", data);
             setDashboardData(data);
-            // console.log({ data });
           } else {
             console.error(
               "Failed to fetch dashboard data:",
@@ -37,6 +37,7 @@ export default function Home() {
         const response = await fetch("/api/recent-wishlist-product");
         if (response.ok) {
           const product = await response.json();
+          console.log("index-product", product);
           setRecentWishlistProduct(product);
         } else {
           // Handle error cases here

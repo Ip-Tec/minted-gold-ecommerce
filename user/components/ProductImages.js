@@ -1,50 +1,46 @@
-import styled from "styled-components";
-import {useState} from "react";
+import { useState } from "react";
 
-const Image = styled.img`
-    max-width: 100%;
-    max-height: 100%;
-  `;
-const BigImage = styled.img`
-  max-width: 100%;
-  max-height: 200px;
-`;
-const ImageButtons = styled.div`
-    display: flex;
-    gap: 10px;
-    flex-grow: 0;
-    margin-top: 10px;
-  `;
-const ImageButton = styled.div`
-    border: 2px solid #ccc;
-    ${props => props.active ? `
-      border-color: #ccc;
-    ` : `
-      border-color: transparent;
-    `}
-    height: 40px;
-    padding: 2px;
-    cursor: pointer;
-    border-radius: 5px;
-  `;
-const BigImageWrapper = styled.div`
-  text-align: center;
-`;
+const Image = ({ src }) => (
+  <img className="max-w-full max-h-full" src={src} alt="" />
+);
 
-export default function ProductImages({images}) {
-  const [activeImage,setActiveImage] = useState(images?.[0]);
+const BigImage = ({ src }) => (
+  <img className="max-w-full max-h-200" src={src} alt="" />
+);
+
+const ImageButtons = ({ children }) => (
+  <div className="flex gap-10 flex-grow-0 mt-10">{children}</div>
+);
+
+const ImageButton = ({ active, onClick, children }) => (
+  <div
+    className={`border-2 ${active ? "border-gray-300" : "border-transparent"} h-40 p-2 cursor-pointer rounded-5`}
+    onClick={onClick}
+  >
+    {children}
+  </div>
+);
+
+const BigImageWrapper = ({ children }) => (
+  <div className="text-center">{children}</div>
+);
+
+export default function ProductImages({ images }) {
+  const [activeImage, setActiveImage] = useState(images?.[0]);
+
   return (
     <>
       <BigImageWrapper>
         <BigImage src={activeImage} />
       </BigImageWrapper>
       <ImageButtons>
-        {images.map(image => (
+        {images.map((image) => (
           <ImageButton
             key={image}
-            active={image===activeImage}
-            onClick={() => setActiveImage(image)}>
-            <Image src={image} alt=""/>
+            active={image === activeImage}
+            onClick={() => setActiveImage(image)}
+          >
+            <Image src={image} />
           </ImageButton>
         ))}
       </ImageButtons>

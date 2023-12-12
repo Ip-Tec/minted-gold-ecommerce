@@ -19,7 +19,8 @@ export default function Layout({ children }) {
   }, [session]);
 
   const displayLoginUser = session?.user?.name;
-  if (status == "unauthenticated" || status == "loading") {
+  console.log("session",session);
+  if (!session) {
     return (
       <>
         <div className="bg-slate-900 w-screen h-screen flex items-center relative shadow-md">

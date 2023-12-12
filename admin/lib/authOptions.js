@@ -1,8 +1,8 @@
-import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaClient } from "@prisma/client";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-import { PrismaClient } from "@prisma/client";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 const prisma = new PrismaClient();
 
@@ -69,7 +69,7 @@ export const authOptions = {
         }
 
         try {
-          const adminData = await prisma.admin.findUnique({
+          const adminData = await prisma.user.findUnique({
             where: {
               email: credentials.email,
             },
@@ -105,29 +105,53 @@ export const authOptions = {
     async jwt(token, user, account, profile, isNewUser) {
       // console.log({ user });
       // console.log({ token });
+      // console.log("token, user, account, profile, isNewUser", token, user, account, profile, isNewUser);
       if (token.error && token.error.message) {
         return null;
       }
 
-      if (user) {
-        return {
-          ...token,
-          ...user,
-        };
+      if (isNewUser) {
+        // Check if the new user's email is in the admin database
+        try {
+          const adminData = await prisma.user.findUnique({
+            where: {
+              email: user.email, // Assuming the email is present in the user object
+            },
+          });
+
+          // if (adminData) {
+          //   // If the new user's email is in the admin database, add admin role
+          //   user.adminrole = "Admin"; // Modify as needed
+          // }
+        } catch (error) {
+          console.error("error.message", error.message);
+          return error.message;
+        }
       }
-      // console.log("108: token.token", user);
-      return { ...token, ...user, token };
+
+      if (user) {
+        return { ...token, ...user };
+      }
+      // console.log("134: token.token", token);
+      return { ...token, user, token };
     },
     async session(session, token, user) {
+      // console.log("token, user, session", token, user, session);
       // console.log({ session }); // Check the token object in the console
-      console.log("125: token?.token", session.token.token.token); // Check the token object in the console
-      console.log("126: token?.token.user", session.token.token.token.user); // Check the token object in the console
+      // console.log("ok",session, token, user); // Check the token object in the console
+      // console.log("ok", token); // Check the token object in the console
+      // console.log(session.session); // Check the token object in the console
+      // console.log("141: session-user", session.token); // Check the token object in the console
+      // console.log("142: token?.token", session.token.token.token); // Check the token object in the console
+      // console.log("143: token?.token", session.token.token.token); // Check the token object in the console
+      // console.log("124: token?.token.user", session.token.token.token.user); // Check the token object in the console
       // console.log("115: user", user); // Check the token object in the console
 
       // Extract user information from the nested structure
       const { name, email, id, username, adminrole } =
-        session?.token.token.token.user || session.token.token.user || session.token.token.token.token.user;
-      console.log("131:", { name, email, id, username, adminrole });
+        user || token?.token?.user || {};
+
+      // console.log("150:", { name, email, id, username, adminrole });
       if (token) {
         session.accessToken = token?.token?.accessToken;
         const { name, email, id, username, adminrole } =

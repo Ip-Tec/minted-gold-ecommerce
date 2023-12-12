@@ -12,7 +12,7 @@ export default function Products() {
       setProducts(response.data);
     });
   }, [session]);
-  console.log({ products });
+  // console.log({ products });
   return (
     <Layout>
       <Link
