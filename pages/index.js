@@ -38,6 +38,7 @@ export async function getServerSideProps() {
 
     // Check if featuredProduct is null or undefined
     if (!featuredProduct) {
+      return props.title = <h3>Featured product not found</h3>;
       throw new Error("Featured product not found");
     }
 
@@ -59,4 +60,3 @@ export async function getServerSideProps() {
     };
   }
 }
-
