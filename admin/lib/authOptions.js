@@ -42,10 +42,16 @@ export const authOptions = {
           response_type: "code",
         },
       },
+      profile(profile) {
+        return { role: profile.role ?? "Admin" };
+      },
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
+      profile(profile) {
+        return { role: profile.role ?? "Admin" };
+      },
     }),
     CredentialsProvider({
       credentials: {
@@ -150,7 +156,7 @@ export const authOptions = {
       // Extract user information from the nested structure
       const { name, email, id, username, adminrole } =
         user || token?.token?.user || {};
-
+        session.user.role = user.role
       // console.log("150:", { name, email, id, username, adminrole });
       if (token) {
         session.accessToken = token?.token?.accessToken;

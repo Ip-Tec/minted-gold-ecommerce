@@ -19,7 +19,7 @@ export default function Layout({ children }) {
   }, [session]);
 
   const displayLoginUser = session?.user?.name;
-  console.log("session",session);
+  console.log("session", session,displayLoginUser);
   if (!session) {
     return (
       <>

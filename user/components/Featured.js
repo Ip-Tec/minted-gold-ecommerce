@@ -13,7 +13,7 @@ export default function Featured({ product }) {
     addProduct(product.id);
     console.log(product);
   }
-
+  console.log({ product });
   return (
     <div className="bg-gray-900 text-white py-10">
       <Center>
@@ -28,7 +28,7 @@ export default function Featured({ product }) {
 
             <div className="flex gap-10 mt-5">
               <ButtonLink
-                href={`/product/${product.id}`}
+                href={`/product/${product}`}
                 outline={true}
                 white={true}
               >
@@ -42,8 +42,8 @@ export default function Featured({ product }) {
           </div>
 
           <div className="flex items-center justify-center">
-            <Image
-              src={{ pathname: `/productImg/${product.image}` }}
+            <img
+              src={{ pathname: `/productImg/${product}` }}
               alt=""
               width={400}
               height={400}
