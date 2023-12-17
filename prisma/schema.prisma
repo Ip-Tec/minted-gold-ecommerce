@@ -33,22 +33,24 @@ model Order {
 }
 
 model Product {
-  id            Int       @id @default(autoincrement())
-  title         String
-  description   String
-  price         Float
-  adminUsername String
-  category      String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now())
-  image         Json
-  stock         String
-  admin         Admin     @relation(fields: [adminUsername], references: [username], map: "Product_adminUsername_fkey")
-  categories    Categorie @relation(fields: [category], references: [name], map: "Product_categorie_fkey")
-  orders        Order[]   @relation("ordertoproduct")
-  users         Buyer[]   @relation("wishlistitem")
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  price       Float
+  adminName   String
+  category    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  image       Json
+  stock       String
+  user        User      @relation(fields: [adminName], references: [email], map: "Product_adminName_fkey")
+  categories  Categorie @relation(fields: [category], references: [name], map: "Product_categorie_fkey")
+  orders      Order[]   @relation("ordertoproduct")
+  buyer       Buyer[]   @relation("wishlistitem")
+  Admin       Admin?    @relation(fields: [adminId], references: [id])
+  adminId     Int?
 
-  @@index([adminUsername], map: "Product_adminUsername_fkey")
+  @@index([adminName], map: "Product_adminName_fkey")
 }
 
 model Role {
@@ -113,6 +115,7 @@ model User {
   emailVerified DateTime?
   image         String?
   role          String?
+  products      Product[]
   accounts      Account[]
   sessions      Session[]
 }

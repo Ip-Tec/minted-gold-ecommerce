@@ -2,7 +2,7 @@ import React from 'react';
 
 const Center = ({ children }) => {
   return (
-    <div className="max-w-screen-md mx-auto px-4">
+    <div className="max-w-screen-lg mx-auto px-1">
       {children}
     </div>
   );

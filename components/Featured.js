@@ -1,7 +1,6 @@
 // components/Featured.js
-
+import Image from "next/image";
 import { useContext } from "react";
-import { Image } from "next/image";
 import Button from "@/components/Button";
 import Center from "@/components/Center";
 import ButtonLink from "@/components/ButtonLink";
@@ -17,7 +16,7 @@ export default function Featured({ product }) {
       console.log(product);
     }
   }
-
+  console.log({ product });
   return (
     <div className="bg-gray-900 text-white py-10">
       <Center>
@@ -33,7 +32,7 @@ export default function Featured({ product }) {
 
               <div className="flex gap-10 mt-5">
                 <ButtonLink
-                  href={`/product/${product}`}
+                  href={`/product/${product.id}`}
                   outline={true}
                   white={true}
                 >
@@ -47,12 +46,7 @@ export default function Featured({ product }) {
             </div>
 
             <div className="flex items-center justify-center">
-              <img
-                src={{ pathname: `/productImg/${product}` }}
-                alt=""
-                width={400}
-                height={400}
-              />
+              <Image src={`http://localhost:3001${product?.image?.[0]}`} alt="" width={400} height={400} />
             </div>
           </div>
         ) : (

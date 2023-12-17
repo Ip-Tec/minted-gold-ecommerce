@@ -1,3 +1,5 @@
+// pages/cart.js
+
 import Header from "@/components/Header";
 import Center from "@/components/Center";
 import Button from "@/components/Button";
@@ -116,6 +118,10 @@ export default function CartPage() {
   for (const productId of cartProducts) {
     const price = products.find((p) => p.id === productId)?.price || 0;
     total += price;
+
+    console.log("productId:", productId);
+console.log("products:", products);
+
   }
 
   if (isSuccess) {

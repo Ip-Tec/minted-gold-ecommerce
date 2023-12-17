@@ -1,10 +1,10 @@
 // component/Header.js
-import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useContext } from "react";
 import Center from "@/components/Center";
 import BarsIcon from "@/components/icons/Bars";
+import React, { useState, useEffect } from "react";
 import { CartContext } from "@/components/CartContext";
-import { useContext } from "react";
 import { getCurrentGoldPrice } from "@/lib/GoldPrice";
 
 const Header = () => {
@@ -33,47 +33,45 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="bg-black">
-      <Center>
-        <div className="flex justify-between py-5 items-center">
+    <header className="bg-yellow-700 px-3 h-20 sticky w-full ">
+        <div className="flex justify-between w-auto items-center">
           <div className="flex items-center space-x-4">
             <div className="flex-grow">
               <Link href="/" className="text-white text-lg font-bold">
-                Minted Gold{" "}
+                <img src="./logo.png" className="w-20 p-0 m-0" alt="Minted Gold"/>
               </Link>
             </div>
-            <div className="hidden md:flex items-center">
-              <p className="">Current Gold{currentGold}</p>
+            <div className="flex items-center">
+              <p className="">Current Gold {currentGold || "$200" }</p>
             </div>
           </div>
-          <div className="md:hidden">
+          {/* <div className="md:hidden">
             <button
               className="text-white"
               onClick={() => setMobileNavActive((prev) => !prev)}
             >
               <BarsIcon />
             </button>
-          </div>
-          <div className="hidden md:block">
-            <Link href="/cart" className="text-white">
+          </div> */}
+          <div className="block mr-0">
+            <Link href="/cart" className="text-white pr-2">
               {" "}
               Cart ({cartProducts.length})
             </Link>
           </div>
         </div>
-        <div
+        {/* <div
           className="flex items-center"
           style={{ borderBottom: isScrolled ? "1px solid #ccc" : "none" }}
         >
-          <div className="flex-grow hidden md:block">
-            <input
+          <div className="flex-grow sm:block">
+             <input
               type="text"
               placeholder="Search"
               className="py-2 px-4 border border-gray-300 rounded"
-            />
+            /> 
           </div>
-        </div>
-      </Center>
+        </div> */}
     </header>
   );
 };

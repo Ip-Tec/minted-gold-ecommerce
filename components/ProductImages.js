@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 const Image = ({ src }) => (
-  <img className="max-w-full max-h-full" src={src} alt="" />
+  <img className="max-w-full max-h-24 border-none" src={`http://localhost:3001${src}`} alt="" />
 );
 
 const BigImage = ({ src }) => (
-  <img className="max-w-full max-h-200" src={src} alt="" />
+  <img className="max-w-full max-h-96" src={`http://localhost:3001${src}`} alt="" />
 );
 
 const ImageButtons = ({ children }) => (
@@ -22,7 +22,7 @@ const ImageButton = ({ active, onClick, children }) => (
 );
 
 const BigImageWrapper = ({ children }) => (
-  <div className="text-center">{children}</div>
+  <div className="text-center h-auto">{children}</div>
 );
 
 export default function ProductImages({ images }) {
