@@ -1,26 +1,26 @@
-import React, { useContext } from "react";
+import Title from "@/components/Title";
+import Button from "@/components/Button";
 import Header from "@/components/Header";
 import Center from "@/components/Center";
-import Title from "@/components/Title";
-import ProductImages from "@/components/ProductImages";
-import Button from "@/components/Button";
-import CartIcon from "@/components/icons/CartIcon";
-import { CartContext } from "@/components/CartContext";
+import React, { useContext } from "react";
 import { PrismaClient } from "@prisma/client";
+import CartIcon from "@/components/icons/CartIcon";
+import ProductImages from "@/components/ProductImages";
+import { CartContext } from "@/components/CartContext";
 
 const prisma = new PrismaClient();
 
 const ColWrapper = ({ children }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 my-10">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 my-10 text-black">
     {children}
   </div>
 );
 
 const PriceRow = ({ children }) => (
-  <div className="flex items-center gap-8 md:gap-12 mt-8">{children}</div>
+  <div className="flex items-center justify-center md:gap-12 mt-8">{children}</div>
 );
 
-const Price = ({ children }) => <span className="text-lg md:text-xl">{children}</span>;
+const Price = ({ children }) => <span className="text-lg md:text-xl text-black">{children}</span>;
 
 const ProductPage = ({ product }) => {
   const { addProduct } = useContext(CartContext);
@@ -41,19 +41,19 @@ const ProductPage = ({ product }) => {
       <Header />
       <Center>
         <ColWrapper>
-          <div className="bg-white rounded-lg p-8">
-            {product.images && product.images.length > 0 && (
-              <ProductImages images={product.images} />
+          <div className="rounded-lg max-h-screen">
+            {product.image && product.image.length > 0 && (
+              <ProductImages images={product.image} />
             )}
           </div>
-          <div>
+          <div className="md:mt-28 w-full m-auto text-center">
             {product.title && <Title>{product.title}</Title>}
             {product.description && <p>{product.description}</p>}
             <PriceRow>
-              <div>{product.price && <Price>${product.price}</Price>}</div>
+              <div >{product.price && <Price>${product.price}</Price>}</div>
               <div>
                 {addProduct && (
-                  <Button primary onClick={() => addProduct(product._id)}>
+                  <Button onClick={() => addProduct(product._id)} className="flex justify-evenly align-middle border-yellow-500 border-2 p-1 rounded-md shadow-md hover:bg-yellow-500">
                     <CartIcon />
                     Add to cart
                   </Button>

@@ -2,25 +2,14 @@
 
 import Header from "@/components/Header";
 import Featured from "@/components/Featured";
-import { prisma } from "@/lib/prisma";
-
+import { PrismaClient } from "@prisma/client";
 import NewProducts from "@/components/NewProducts";
 
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
-export default function HomePage({ featuredProduct, newProducts }) {
-  return (
-    <div>
-      <Header />
-      <Featured product={featuredProduct} />
-      <NewProducts products={newProducts} />
-    </div>
-  );
-}
-
-export async function getServerSideProps() {
+async function getServerSideProps() {
   // Assuming your product ID is an integer
-  const featuredProductId = 1;
+  const featuredProductId = 5;
 
   try {
     const featuredProduct = await prisma.product.findUnique({
@@ -28,6 +17,8 @@ export async function getServerSideProps() {
         id: featuredProductId,
       },
     });
+
+    console.log({ featuredProductId });
 
     const newProducts = await prisma.product.findMany({
       orderBy: {
@@ -38,7 +29,6 @@ export async function getServerSideProps() {
 
     // Check if featuredProduct is null or undefined
     if (!featuredProduct) {
-      return props.title = <h3>Featured product not found</h3>;
       throw new Error("Featured product not found");
     }
 
@@ -59,4 +49,16 @@ export async function getServerSideProps() {
       },
     };
   }
+}
+
+export { getServerSideProps };
+
+export default function HomePage({ featuredProduct, newProducts }) {
+  return (
+    <div>
+      <Header />
+      <Featured product={featuredProduct} />
+      <NewProducts products={newProducts} />
+    </div>
+  );
 }
