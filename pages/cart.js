@@ -1,3 +1,4 @@
+"use client";
 // pages/cart.js
 
 import Header from "@/components/Header";
@@ -59,6 +60,13 @@ export default function CartPage() {
   const [country, setCountry] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
+  console.log("hdgbfibu", {
+    user,
+    cartProducts,
+    addProduct,
+    removeProduct,
+    clearCart,
+  });
   useEffect(() => {
     if (user) {
       // User is logged in, use cart from context
@@ -72,6 +80,7 @@ export default function CartPage() {
     } else {
       // User is not logged in, fetch cart from local storage
       const storedCart = localStorage.getItem("cart");
+      console.log("storedCart:83", { storedCart });
       if (storedCart) {
         setProducts(JSON.parse(storedCart));
       } else {
@@ -114,14 +123,14 @@ export default function CartPage() {
     }
   }
 
+  console.log("cartProducts", { cartProducts });
+
   let total = 0;
   for (const productId of cartProducts) {
+    // console.log("productId:", productId);
+    // console.log("products:", products);
     const price = products.find((p) => p.id === productId)?.price || 0;
     total += price;
-
-    console.log("productId:", productId);
-console.log("products:", products);
-
   }
 
   if (isSuccess) {
@@ -186,8 +195,8 @@ console.log("products:", products);
                       </td>
                       <td>
                         $
-                        {cartProducts.filter((id) => id === product.id)
-                          .length * product.price}
+                        {cartProducts.filter((id) => id === product.id).length *
+                          product.price}
                       </td>
                     </tr>
                   ))}
