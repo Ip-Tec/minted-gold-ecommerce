@@ -1,11 +1,13 @@
 // component/Header.js
+
 import Link from "next/link";
+import {Image} from "next/image"
 import { useContext } from "react";
 import Center from "@/components/Center";
 import BarsIcon from "@/components/icons/Bars";
 import React, { useState, useEffect } from "react";
-import { CartContext } from "@/components/CartContext";
 import { getCurrentGoldPrice } from "@/lib/GoldPrice";
+import { CartContext } from "@/components/CartContext";
 
 const Header = () => {
   const { cartProducts } = useContext(CartContext);
@@ -38,7 +40,7 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             <div className="flex-grow">
               <Link href="/" className="text-white text-lg font-bold">
-                <img src="./logo.png" className="w-20 p-0 m-0" alt="Minted Gold"/>
+                <Image src="./logo.png" className="w-20 p-0 m-0" alt="Minted Gold"/> 
               </Link>
             </div>
             <div className="flex items-center">
