@@ -11,33 +11,76 @@ import { CartContext } from "@/components/CartContext";
 const ProductBox = ({ id, title, description, price, image }) => {
   const { addProduct } = useContext(CartContext);
   const url = "/product/" + id;
-  console.log("ProductBox", { id, title, description, price, image });
+  let images;
+  if (Array.isArray(image)) {
+    images = image;
+  } else {
+    images = JSON.parse(image);
+  }
+  // console.log("ProductBox", { id, title, description, price, image });
+  // console.log("ProductBox", image);
+  // console.log("ProductBox");
   return (
-    <div className="mb-6 text-black rounded-md shadow-sm hover:shadow-md hover:shadow-yellow-500 p-1">
+    <div className="mb-6 m-4 text-black rounded-md shadow-sm hover:shadow-md w-[15rem]">
       <Link
         href={url}
-        className="bg-white p-4 h-32 flex items-center justify-center rounded relative"
+        className="bg-white h-32 flex items-center justify-center rounded relative"
       >
+        {/* <h1>Image_URL{images[0]}</h1> */}
         <Image
-          className="max-w-full max-h-20"
-          src={`http://localhost:3001${image?.[0]}` || "./logo.png"}
+          priority
           alt={title}
-          width={200}
-          height={600}
+          width={300}
+          height={400}
+          className="max-w-full max-h-40 mb-3 rounded-2xl"
+          src={`${images[0]}` || "/logo.png"}
         />
-        <div className="text-sm font-normal absolute bg-gray-600 text-gray-50 rounded-full -bottom-4 right-1 p-2">
-            ${price}</div>
+        {/* <div className="text-sm font-normal absolute bg-gray-600 text-gray-50 rounded-full bg-opacity-75 -bottom-4 right-1 p-2">
+          ${price}
+        </div> */}
       </Link>
-      <div className="mt-2">
+      <div className="mt-2 flex flex-col">
         <Link
           href={url}
-          className="font-normal text-sm text-black no-underline"
+          className="font-normal text-base text-black mt-2 mx-1 divide-solid border-b border-b-gray-500"
         >
           {title}
         </Link>
-        <div className="flex justify-between mt-1 flex-col">
-          <Button onClick={() => addProduct(id)} className="flex justify-evenly align-middle border-yellow-500 border-2 p-1 rounded-md shadow-md hover:bg-yellow-500">
-            <CartIcon className="mx-1 w-5 " /> Add to Cart
+        <Link
+          href={url}
+          className="font-normal text-base text-black mt-2 mx-1 divide-solid border-b border-b-gray-500"
+        >
+          5 star ({(price / 8) * 2 + 1})
+        </Link>
+        <Link
+          href={url}
+          className="font-normal flex justify-between text-base text-black my-2 mx-1 px-2 divide-solid border-b border-b-gray-500"
+        >
+          <span className="text-base">₦{price}</span>
+          <del className="opacity-90 text-gray-400">₦{price + 20}</del>
+        </Link>
+        <div className="sm:block md:flex justify-evenly mb-1 items-center w-full text-xs mt-1">
+          <Button
+            // onClick={() => addProduct(id)}
+            className="flex justify-evenly border-b-2 hover:border-2 p-1 rounded-md hover:shadow-md hover:bg-gray-500 hover:text-gray-50 px-2"
+          >
+            {" "}
+            Learn More
+          </Button>
+
+          <Button
+            onClick={() =>
+              addProduct({
+                id,
+                title,
+                price,
+                image: images[0],
+                quantity: 1,
+              })
+            }
+            className="flex justify-evenly border-gray-500 border-2 p-1 rounded-md shadow-md hover:bg-gray-500  hover:text-gray-50 px-2"
+          >
+            <CartIcon className="mx-1 w-4 ch " /> Add to Cart
           </Button>
         </div>
       </div>

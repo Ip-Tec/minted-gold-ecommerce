@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 const Image = ({ src }) => (
-  <img className="max-w-full max-h-24 border-none" src={`http://localhost:3001${src}`} alt="" />
+  <img className="max-w-full max-h-24 border-none" src={`http://localhost:3000${src}`} alt="" />
 );
 
 const BigImage = ({ src }) => (
-  <img className="max-w-full max-h-96" src={`http://localhost:3001${src}`} alt="" />
+  <img className="max-w-full max-h-96" src={`http://localhost:3000${src}`} alt="" />
 );
 
 const ImageButtons = ({ children }) => (
