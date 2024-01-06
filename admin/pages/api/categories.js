@@ -8,8 +8,8 @@ const prisma = new PrismaClient();
 
 export default async function handle(req, res) {
   const { method } = req;
-  // const jjj = await isAdminRequest(req, res);
-  // console.log({ jjj });
+
+  // Get Categories
   if (method === "GET") {
     try {
       const categories = await prisma.categorie.findMany();
@@ -20,21 +20,25 @@ export default async function handle(req, res) {
     }
   }
 
+  // Create Categories
   if (method === "POST") {
-    const { name, parentCategory, properties } = req.body;
-    const categoryDoc = await prisma.category.create({
+    console.log(req.body);
+    const { name, description, parentCategory } = req.body;
+    const categoryDoc = await prisma.categorie.create({
       data: {
         name,
-        parentId: parentCategory || undefined,
-        properties,
+        description,
+        // parentId: parentCategory || undefined,
+        // properties,
       },
     });
     res.json(categoryDoc);
   }
 
+  // Edit Categories
   if (method === "PUT") {
     const { name, parentCategory, properties, id } = req.body;
-    const categoryDoc = await prisma.category.update({
+    const categoryDoc = await prisma.categorie.update({
       where: { id: id },
       data: {
         name,
@@ -45,9 +49,10 @@ export default async function handle(req, res) {
     res.json(categoryDoc);
   }
 
+  // Delete Categories
   if (method === "DELETE") {
     const { id } = req.query;
-    await prisma.category.delete({
+    await prisma.categorie.delete({
       where: { id: parseInt(id) },
     });
     res.json("ok");

@@ -37,15 +37,14 @@ export default async function handle(req, res) {
 
   // Create new product
   if (method === "POST") {
-    // console.log("req.body", req.body);
     // console.log("req.bodyimages[1]", req.body.images[1]);
     const { title, description, price, image, category, stock, adminName } =
       req.body;
     // Ensure that the price is a numeric value
     const numericPrice = parseFloat(price);
-    // if (!Array.isArray(image)) {
-    //   return res.status(400).json({ error: "Invalid image format" });
-    // }
+    if (!Array.isArray(image)) {
+      return res.status(400).json({ error: "Invalid image format" });
+    }
    // console.log(req.body.image);
     const product = await prisma.product.create({
       data: {

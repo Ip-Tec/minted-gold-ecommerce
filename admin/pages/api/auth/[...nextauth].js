@@ -15,20 +15,31 @@ export const adminBackDoorEmails = [
 
 export default NextAuth(authOptions);
 
+// export async function isAdminRequest(req, res) {
+//   try {
+//     const session = await getServerSession(authOptions, res, req);
+
+//     // console.log({ session });
+//     if (!session?.user) {
+//       console.error("isAdminRequest: No user in session.");
+//       return res.status(401).json({ error: "User not authorized" });
+//     }
+
+//     // Continue with other logic for admin requests
+//     return res.status(200).json({ success: true });
+//   } catch (error) {
+//     console.error("isAdminRequest error:", error);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// }
+
 export async function isAdminRequest(req, res) {
-  try {
-    const session = await getServerSession(authOptions, res, req);
+  const session = await getServerSession(req, res, authOptions);
 
-    // console.log({ session });
-    if (!session?.user) {
-      console.error("isAdminRequest: No user in session.");
-      return res.status(401).json({ error: "User not authorized" });
-    }
-
-    // Continue with other logic for admin requests
-    return res.status(200).json({ success: true });
-  } catch (error) {
-    console.error("isAdminRequest error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+  // Check if the user has the role "admin"
+  if (session.user.role.toLowerCase() !== 'admin') {
+    res.status(401);
+    res.end();
+    throw 'not an admin';
   }
 }

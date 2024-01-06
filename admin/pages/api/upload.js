@@ -24,7 +24,7 @@ export default async function handle(req, res) {
   for (const file of files.file) {
     const ext = file.originalFilename.split(".").pop();
     const newFilename = Date.now() + "." + ext;
-    const localFilePath = path.join(process.cwd(), "public/productImg", newFilename);
+    const localFilePath = path.join(process.cwd(), "../public/productImg", newFilename);
 
     // Save file to local directory
     await fs.promises.writeFile(

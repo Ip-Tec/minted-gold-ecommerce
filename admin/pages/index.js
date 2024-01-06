@@ -12,13 +12,13 @@ export default function Home() {
     const fetchData = async () => {
       try {
         if (session) {
-          const response = await fetch("/api/dashboard/" + session.user, {
+          const response = await fetch("/api/dashboard/", {
             method: "GET",
           });
           // console.log(session.accessToken);
           if (response.ok) {
             const data = await response.json();
-            console.log("index-data", data);
+            // console.log("index-data", data);
             setDashboardData(data);
           } else {
             console.error(

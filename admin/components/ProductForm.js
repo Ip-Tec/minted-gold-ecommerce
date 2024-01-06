@@ -102,6 +102,19 @@ export default function ProductForm({
     });
   }
 
+  const removeUploadedImage = async (removedImage) => {
+    // Make API call to delete the image on the server
+    console.log("removedImage", removedImage);
+    try {
+      await axios.post("/api/deleteImage", { imageLink: `../public${removedImage}` });
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+
+    // Update local state to remove the image
+    setImages((prevImages) => prevImages.filter((img) => img !== removedImage));
+  };
+
   const propertiesToFill = [];
   if (categories.length > 0 && category) {
     let catInfo = categories.find(({ id }) => id === category);
@@ -168,9 +181,20 @@ export default function ProductForm({
             images.map((link) => (
               <div
                 key={link}
-                className="h-24 bg-white p-4 shadow-sm rounded-sm border border-gray-200"
+                className="h-24 bg-white shadow-sm rounded-lg border border-gray-200 hover:scale-110 relative"
               >
-                <img src={link} alt="" className="rounded-lg" />
+                {/* {link} */}
+                <img
+                  src={`http://localhost:3030${link}`}
+                  alt={link}
+                  className="rounded-lg"
+                />
+                <span
+                  className="absolute bottom-0 w-full h6 bg-orange-500 text-white text-center rounded-lg bg-opacity-60 p-1 cursor-pointer animate-bounce"
+                  onClick={() => removeUploadedImage(link)}
+                >
+                  Remove
+                </span>
               </div>
             ))}
         </ReactSortable>

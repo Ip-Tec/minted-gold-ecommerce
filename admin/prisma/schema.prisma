@@ -47,6 +47,7 @@ model Product {
   categories  Categorie @relation(fields: [category], references: [name], map: "Product_categorie_fkey")
   orders      Order[]   @relation("ordertoproduct")
   buyer       Buyer[]   @relation("wishlistitem")
+  buyers      User[]    @relation("wishlistitem")
   Admin       Admin?    @relation(fields: [adminId], references: [id])
   adminId     Int?
 
@@ -118,6 +119,7 @@ model User {
   products      Product[]
   accounts      Account[]
   sessions      Session[]
+  wishlist      Product[] @relation("wishlistitem")
 }
 
 model VerificationToken {
